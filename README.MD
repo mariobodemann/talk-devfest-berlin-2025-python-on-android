@@ -17,6 +17,6 @@ See [./slides](./slides) for the google slides.
 
 # TODO
 
-*[ ] Slides
-*[ ] publish `deckdown`
-*[ ] render html and gslides
+- [ ] Slides
+- [ ] publish `deckdown`
+- [ ] render html and gslides
