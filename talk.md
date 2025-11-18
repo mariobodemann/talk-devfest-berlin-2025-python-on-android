@@ -1,12 +1,12 @@
 # Python on Android
 
-## How to Integrate Python Libraries in Your Android Apps
+## How to Integrate Python<br/>in Your Android Apps
 
-### Mario Bodemann
+### by Mario Bodemann
 
 ----------
 
-# (Disclaimer |: `Mario Bodemann`)
+# (Disclaimer |: _Mario Bodemann_)
 
 * (not test relevant)
 * Android Developer Advocate @ Yubico
@@ -16,55 +16,72 @@
 
 ----------
 
-# (Disclaimer ][: `deckdown`)
+# (Disclaimer ][: _deckdown_)
 
 * shenanigans
 * running code :mind-blown:
 * https://github.com/mariobodemann/deckdown
 
-``` bash
-head -n 5 talk.md
-```
+~~~ bash
+grep '_deckdown_' -A5 talk.md
+~~~
 
 ----------
 
-# Python
-
-![](python.png)
+![](python-logo.png)
 
 ---------
 
 # Python: Hello World
 
-``` python
+* low WTF's per minute
+* runs everywhere (Linux, Mac, Windows, Android)
+    * we ignore iOS
+* runtime compilation
+
+~~~ python
 def hello(name):
   print(f"Hello World, {name}!")
 
 hello(input('What is your name? '))
-```
+~~~
+
+-------------
+
+# Python: Hello scipy/numpy
+
+~~~ python
+from scipy.signal import wiener
+import matplotlib.pyplot as plt
+import numpy as np
+
+rng = np.random.default_rng()
+img = rng.random((40, 40))
+
+filtered_img = wiener(img, (5, 5))
+f, (plot1, plot2) = plt.subplots(1, 2)
+
+plot1.imshow(img)
+plot2.imshow(filtered_img)
+
+plt.show()
+~~~
 
 ----------
 
-# Python: Hello Data
+# Python: How I Use It
 
-``` python
-# something something numpy
-```
-----------
+~~~ bash
+fraktur -m rainbow -b round -f caps -- Welcome!
+~~~
 
-# Python: Hello Mario
+~~~ bash
+fraktur -f chess -- Hello World!
+~~~
 
-``` python
-fraktur -m rainbow -b round -f caps -- Hello World!
-```
-
-----------
-
-# Python: Hello Mario 2.0
-
-``` python
-fraktur -f all -- Hello World!
-```
+~~~ bash
+fraktur -f slack -- New Release Available!
+~~~
 
 --------
 
@@ -72,13 +89,10 @@ fraktur -f all -- Hello World!
 
 ![](python-on-android.png)
 
---------
-
-# {{MOTIVATE}}
-
-* `fraktur` on Android?
-  * kotlin
-  * best practize
+~~~ bash
+cd ~/Library/Android/sdk/emulator
+./emulator -no-snapshot @Medium_Phone &
+~~~
 
 --------
 
@@ -89,69 +103,171 @@ fraktur -f all -- Hello World!
 * can install open source tools
 * python is oss
 
-``` bash
-pkg install termux-gui python
-
-python -c 'print("hello")'
-```
-
------------
+--------
 
 # termux-gui
 
 * control Android via cli
+* access ui
+* read phone log
+* create files
 
-``` bash
-pkg install termux-gui
-```
+------
+
+# DEMO: Termux in Android
+
+~~~ pbcopy
+termux-dialog -t hello
+~~~
 
 -------
 
 # termux-gui in python
 
 * control termux-gui from python
+* using _subprocess_ library
+* calling termux-gui binaries
 
-``` python
-subprocess.run(["termux-dialog","-t","hello"])
-```
+~~~ pbcopy
+import subprocess
+
+r = subprocess.run(
+    ["termux-dialog", "-t", "hello"],
+    capture_output=True
+)
+
+print(r.stdout.decode().splitlines())
+~~~
 
 --------
 
 # termux-gui: frakturize
 
-``` python
-import subprocess
-p=subprocess.run(["fraktur","-f","all"],capture_output=True)
-opts = ",".join(p.stdout.decode().splitlines())
-p = subprocess.run(["termux-dialog","sheet","-t","Frakturize?","-v",f"{opts}"],capture_output=True)
-import json
-t=json.loads(p.stdout)
-subprocess.run(["termux-clipboard-set",t["text"]])
-```
+~~~ python
+sys.path += ['/Users/Mario.Bodemann/Projects/s9s']
+import fraktur
+
+options = fraktur.generate(
+    'Hello World', 
+    font='all'
+).splitlines()
+
+print(options)
+~~~
+
+------
+
+# Fraktur: show options to user
+
+~~~ termux-python
+proc = subprocess.run(
+    [
+        "termux-dialog", 
+        "sheet", 
+        "-t", "Frakturize?", 
+        "-v", f"{options}"
+    ],
+    capture_output=True
+)
+~~~
+
+---------
+
+# frakturize: copy answer to clipboard
+
+~~~ python
+response = json.loads(
+    proc.stdout
+)
+
+subprocess.run([
+    "termux-clipboard-set", 
+    response["text"]
+])
+~~~
+
+# 🎉
 
 -------
 
-# {{Or integrate in `fraktur`?}}
+# Sub Summary
 
--------
-
-# {{Or tool from ole?}}
+* termux with python
+    * python can call Fraktur
+    * python can call termux-gui
+    * termux-gui can do Android
+* ergo: **python Fraktur can interact with Android**
 
 --------
 
-# {{flask(?)}}
+# Termux: not native
 
-``` python
-# PSEUDO
-flask.run:
-    post(json_body: str | None = None) -> list[str]:
-        body = json(json_body)
-        response = subprocess.run(['python3', 'frakture', '...'])
-        print(f"in: {body}\nout: {response}\n")
-        return response
-```
+* bridging from python to termux to android
+* limited ui flexibility
+* brittle (google says no?)
+    * termux says no?
 
-``` kotlin
+-------
+
+# Termux Redux
+
+## Android UI <--> Python WebServer
+
+![](python-on-web-on-android.png)
+
+-------
+
+# Termux Redux
+
+* Android UI
+    * jetpack compose
+    * retrofit
+
+* Python Web
+    * flask
+    * fraktur
+
+-------
+
+~~~ python
+import sys
+sys.path += ['/Users/Mario.Bodemann/Projects/s9s']
+
+from flask import Flask
+app = Flask('Fraktur.Server')
+
+@app.post('/')
+def hello():
+    import fraktur
+    from flask import request
+
+    message = request.get_data().decode()
+
+    return fraktur.generate(
+        message, 
+        font='all'
+    ).splitlines()
+    
+app.run()
+~~~
+
+--------
+
+# Checking the Server
+
+* test webserver
+* should return list of messages
+* but formated through _fraktur_
+
+~~~ pbcopy
+curl 127.0.0.1:5000 -d 'Hello WOrld 2.01' | jq
+~~~
+
+------------
+
+# Android Web Client
+
+~~~ kotlin
 @Serial
 data class FraktureBody(
   val message: String? = null,
@@ -185,7 +301,7 @@ Box {
   Text(text=text)
 }
 
-```
+~~~
 
 --------
 
