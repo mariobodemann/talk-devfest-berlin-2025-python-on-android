@@ -59,11 +59,9 @@ rng = np.random.default_rng()
 img = rng.random((40, 40))
 
 filtered_img = wiener(img, (5, 5))
-f, (plot1, plot2) = plt.subplots(1, 2)
-
+f, (plot1, plot2) = plt.subplots(1, 2, label="🌭")
 plot1.imshow(img)
 plot2.imshow(filtered_img)
-
 plt.show()
 ~~~
 
@@ -89,11 +87,6 @@ fraktur -f slack -- New Release Available!
 
 ![](python-on-android.png)
 
-~~~ bash
-cd ~/Library/Android/sdk/emulator
-./emulator -no-snapshot @Medium_Phone &
-~~~
-
 --------
 
 # termux
@@ -116,6 +109,14 @@ cd ~/Library/Android/sdk/emulator
 
 # DEMO: Termux in Android
 
+~~~ bash
+adb install f-droid.apk
+~~~
+
+~~~ f-droid
+install termux
+~~~
+
 ~~~ pbcopy
 termux-dialog -t hello
 ~~~
@@ -124,7 +125,6 @@ termux-dialog -t hello
 
 # termux-gui in python
 
-* control termux-gui from python
 * using _subprocess_ library
 * calling termux-gui binaries
 
@@ -144,6 +144,7 @@ print(r.stdout.decode().splitlines())
 # termux-gui: frakturize
 
 ~~~ python
+import sys
 sys.path += ['/Users/Mario.Bodemann/Projects/s9s']
 import fraktur
 
@@ -151,7 +152,6 @@ options = fraktur.generate(
     'Hello World', 
     font='all'
 ).splitlines()
-
 print(options)
 ~~~
 
@@ -220,18 +220,32 @@ subprocess.run([
 # Termux Redux
 
 * Android UI
+
     * jetpack compose
     * retrofit
 
 * Python Web
+
     * flask
     * fraktur
 
 -------
 
-~~~ python
+# Termux Web: Flask
+
+* simple 
+* nice
+* works
+
+~~~ pbcopy
+pip install flask
+~~~
+
+---------
+
+~~~ pbcopy
 import sys
-sys.path += ['/Users/Mario.Bodemann/Projects/s9s']
+sys.path += ['/data/data/com.termux/files/home/s9s']
 
 from flask import Flask
 app = Flask('Fraktur.Server')
@@ -266,6 +280,8 @@ curl 127.0.0.1:5000 -d 'Hello WOrld 2.01' | jq
 ------------
 
 # Android Web Client
+
+android:usesCleartextTraffic="true" 
 
 ~~~ kotlin
 @Serial
