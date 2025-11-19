@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Fraktur</string>
+    <string name="empty">Please enter a new messsage to make into fraktures.</string>
+    <string name="hint_fraktur">Enter message here.</string>
+</resources>
