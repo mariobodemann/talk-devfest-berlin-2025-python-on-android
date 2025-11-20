@@ -11,7 +11,7 @@ composeBom = "2024.09.00"
 retrofit = "3.0.0"
 kserial = "1.9.0"
 retrofit-kserial = "2.3.0-Beta1"
-retrofit-simple = "2.3.0-Beta1"
+python = "16.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,3 +37,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "retrofit-kserial" }
+python = { id = "com.chaquo.python", version.ref = "python" }

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.python)
 }
 
 android {
@@ -19,6 +20,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
     }
 
     buildTypes {
@@ -51,4 +56,19 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+chaquopy {
+    defaultConfig {
+        val pythonPath = System.getenv("ZEPATCH_PYTHON_PATH")
+        if (!pythonPath.isNullOrBlank()) {
+            buildPython(pythonPath)
+        }
+
+        pip {
+            install("pystitch==1.0.0")
+        }
+
+        version = "3.13"
+    }
 }

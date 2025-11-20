@@ -3,15 +3,9 @@ package de.bodemann.fraktur
 import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
-import androidx.compose.runtime.currentCompositionLocalContext
-import androidx.compose.runtime.rememberCompositionContext
-import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.getSystemService
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,12 +23,18 @@ class FrakturViewModel(application: Application) : AndroidViewModel(application)
     val loading: StateFlow<Boolean> = _loading.asStateFlow()
 
     private val pythonBackend = PythonBackend()
+    private val pythonDirectly = PythonDirectly(application.applicationContext)
 
-    fun requestFrakturs(message: String) {
+    private var requestFraktures: suspend (message: String) -> List<String> = pythonBackend::requestFraktures
+
+    private val _embeddedPythonMode: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val embeddedPythonMode: StateFlow<Boolean> = _embeddedPythonMode.asStateFlow()
+
+    fun loadNewFraktures(message: String) {
         _loading.update { true }
         viewModelScope.launch {
             try {
-                val response = pythonBackend.requestFraktures(message)
+                val response = requestFraktures(message)
                 _fraktures.update {
                     response
                 }
@@ -51,5 +51,19 @@ class FrakturViewModel(application: Application) : AndroidViewModel(application)
 
         val clip = ClipData.newPlainText("Fraktur", message)
         manager?.setPrimaryClip(clip)
+    }
+
+    fun usePython() {
+        requestFraktures = pythonDirectly::requestFraktures
+        _embeddedPythonMode.update { true }
+        _error.update { null }
+        _fraktures.update { listOf() }
+    }
+
+    fun useWebServer() {
+        requestFraktures = pythonBackend::requestFraktures
+        _embeddedPythonMode.update { false }
+        _error.update { null }
+        _fraktures.update { listOf() }
     }
 }
