@@ -405,25 +405,123 @@ fast                        | user says "What?" 🧐
 
 --------
 
-# {{CKLOQUOAI}}
+# Chaquopy
 
 ## Python Runtime Embedded in Android App
 
+<center>
+<img src="python-in-android.png" style="width:50%" /> 
+</center>
+
 -----
 
-# {{NAMEHERE}}
+# Chaquopy
 
-* EMBEDDING PYTHON IN ANDROID APP 🤯
-* Two way: Android -> Python && Python -> Android 🤯
-* Wonderous 🤯
-* AMAZING NAME 🤯
+> https://chaquo.com/
+{ style='font-size:98px' }
 
---------
-
-# 🤯
+* embedding Python runtime in Android App 🤯
+* Android -> Python **&&** Python -> Android 🤯
+* *Wonderous 🤯*
 
 --------
 
-### end
+# Chakotay Dependencies
+
+~~~ gradle
+python = "16.1.0"
+python = { id = "com.chaquo.python", version.ref = "python" }
+
+plugins {
+    // ... 
+    alias(libs.plugins.python) apply false
+}
+~~~
+
+---------
+
+# Configuration
+
+~~~ gradle
+chaquopy {
+    defaultConfig {
+        pip {
+            install("pystitch==1.0.0")
+        }
+
+        version = "3.13"
+    }
+}
+~~~
+
+-----------
+
+# In Code Setup
+
+~~~ kotlin
+private val python: Python by lazy {
+    if (!Python.isStarted()) {
+        Python.start(AndroidPlatform(context))
+    }
+
+    Python.getInstance()
+}
+~~~
+
+----------
+
+# Usage in Kotlin
+
+~~~ kotlin
+suspend fun requestFraktures(
+  message: String
+): List<String> {
+  val fraktur = python.getModule("fraktur")
+  
+  val result = fraktur.callAttr(
+    "generate", 
+    message, 
+    "all"
+  )
+
+  val stringResult = result.toString()
+  return stringResult.split("\n")
+}
+~~~
 
 --------
+
+# DEMO of embeded Python
+
+<center>
+<img src="embeded-python.png" style="width:75%" />
+</center>
+
+// THINK ABOUT WIENERS
+
+-------
+
+# Summary
+
+* [Termux](https://termux.org)
+  * unix like Terminal on the go
+  * experiment with OSS software
+  * install git!
+* [WebServer](https://flask.palletsprojects.com/)
+  * make your phone into a server
+  * serve versuse surf. 🏄
+* [Embedding](https://chaquo.com/)
+  * make your app speak Python
+  * use all^1 of your Python libraries
+  * nice separation of work and design
+
+-----------
+
+# github.com/mariobodemann/<br/>talk-devfest-berlin-2025-python-on-android
+
+# End
+
+# QnA
+
+
+
