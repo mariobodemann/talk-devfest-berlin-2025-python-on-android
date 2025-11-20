@@ -72,6 +72,7 @@ li {
 }
 
 table {
+	flex: 1;
 	width:100%;
 }
 
@@ -83,6 +84,7 @@ th {
 }
 
 td {
+	width:45%;
 	border-right: 4px solid white;
 	padding: 16px;
 }
@@ -110,6 +112,10 @@ img {
 .fullscreen {
 	align: center;
 	height: 100%;
+}
+
+.hidden {
+	display:None;
 }
 
 td.linenos .normal { color: #f1fa8c; background-color: #44475a; padding-left: 5px; padding-right: 5px; }

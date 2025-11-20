@@ -36,7 +36,7 @@ grep '_deckdown_' -A5 talk.md
 
 * low WTF's per minute
 * runs everywhere (Linux, Mac, Windows, Android)
-    * we ignore iOS
+  * we ignore iOS
 * runtime compilation
 
 ~~~ python
@@ -48,7 +48,7 @@ hello(input('What is your name? '))
 
 -------------
 
-# Python: Hello scipy/numpy
+# Python: Hello scipy
 
 ~~~ python
 from scipy.signal import wiener
@@ -85,13 +85,16 @@ fraktur -f slack -- New Release Available!
 
 # Python on Android
 
-![](python-on-android.png)
+<center>
+<img src="python-on-android.png" style="width:50%" />
+</center>
 
 --------
 
-# termux
+# Python on Android: Termux
 
-* android app
+* Termux is an Android app
+  * https://termux.org
 * runs a terminal
 * can install open source tools
 * python is oss
@@ -100,10 +103,10 @@ fraktur -f slack -- New Release Available!
 
 # termux-gui
 
-* control Android via cli
-* access ui
-* read phone log
-* create files
+* plugin for termux
+* access Android ui
+  * clipboard, camera,
+  * sms, calls, contacts
 
 ------
 
@@ -193,45 +196,43 @@ subprocess.run([
 # Sub Summary
 
 * termux with python
-    * python can call Fraktur
-    * python can call termux-gui
-    * termux-gui can do Android
-* ergo: **python Fraktur can interact with Android**
+  * python can call Fraktur
+  * python can call termux-gui
+  * termux-gui can do Android
+* ergo
+  * **Python Fraktur can interact with Android**
 
 --------
 
-# Termux: not native
+# Termux Redux
 
-* bridging from python to termux to android
-* limited ui flexibility
-* brittle (google says no?)
-    * termux says no?
+<center>
+<img src="python-web-on-android.png" style="width:50%" /> 
+</center>
 
 -------
 
-# Termux Redux
+# Adding Native Android
 
-## Android UI <--> Python WebServer
-
-![](python-on-web-on-android.png)
+* bridging from Python to Termux to Android
+* limited ui flexibility
+* brittle (google says no?)
+  * termux says no?
 
 -------
 
 # Termux Redux
 
 * Android UI
-
-    * jetpack compose
-    * retrofit
-
+  * jetpack compose
+  * retrofit
 * Python Web
-
-    * flask
-    * fraktur
+  * flask
+  * fraktur
 
 -------
 
-# Termux Web: Flask
+# Termux Web: Flask 🧪
 
 * simple 
 * nice
@@ -243,7 +244,57 @@ pip install flask
 
 ---------
 
-~~~ pbcopy
+# Import fraktur module
+
+~~~ termux-python
+import sys
+sys.path += ['/data/data/com.termux/files/home/s9s']
+~~~
+
+-----
+
+# Import flask and create server
+
+~~~ termux-python
+from flask import Flask
+app = Flask('Fraktur.Server')
+~~~
+
+--------
+
+# Set route (*POST "/" MESSAGE*)
+
+~~~ termux-python
+@app.post('/')
+def hello():
+  # NEXT  
+
+app.run()
+~~~
+
+----------
+
+# Call **fraktur** for server POST
+
+~~~ termux-python
+import fraktur
+from flask import request
+
+message = request.get_data().decode()
+
+return fraktur.generate(
+    message, 
+    font='all'
+).splitlines()
+~~~
+
+-----
+
+# DEMO: *flask server on Android*
+
+## (copy sample, create file)
+
+~~~ { .termux-python .hidden }
 import sys
 sys.path += ['/data/data/com.termux/files/home/s9s']
 
@@ -277,52 +328,102 @@ app.run()
 curl 127.0.0.1:5000 -d 'Hello WOrld 2.01' | jq
 ~~~
 
+-------
+
+![](pyweb-curl.png)
+
 ------------
 
 # Android Web Client
 
-android:usesCleartextTraffic="true" 
+* "default" Android App
+  * MVVM
+  * retrofit
+  * kotlinx serialization
+  * coroutines
+
+-------
+
+# Data Model
 
 ~~~ kotlin
-@Serial
-data class FraktureBody(
-  val message: String? = null,
-  val font: Font? = null,
-  val mode: Mode? = null,
-  val box: Box? = null,
-)
-
-interface FraktureService {
-  @POST("/")
-  suspend fun fraktureize(
-    @Body body : FraktureBody? = null,
-  ) : String
+interface PythonService {
+    @POST("/")
+    suspend fun getFraktures(
+        @Body body: String
+    ): List<String>
 }
-
-val service = Retrofit.build(..)
-val text = service.fraktureize(
-  FraktureBody(
-    message = "Hello World",
-    font = Font.Capitalize,
-    box = Box.Round,
-  )
-)
-
-// ...
-Box {
-  var message by remember {mutablestateOf<String?>(null)}
-  var text = ...
-
-  TextField(.., value=message)
-  Text(text=text)
-}
-
 ~~~
+
+---------------
+
+# Web Service
+
+~~~ kotlin
+class PythonBackend {
+    private val service = Retrofit
+        ./* setup */
+        .create(PythonService::class.java)
+
+    suspend fun requestFraktures(message: String) =
+        service.getFraktures(message).map { 
+            it.removeSurrounding("\"") 
+        }
+}
+~~~
+
+------------
+
+# User Interface
+
+* *Jetpack Compose*
+  * *LazyColumn* for strings returned
+* Android
+  * *ClipboardManager* for clipboard access
+  * *(Android)ViewModel* for cordination
+* nothing too unsurprising
+
+----------
+
+# DEMO: Android calling Python Web
+
+<center>
+<img src="pyweb-android.png" style="width:80%" />
+</center>
+
+-------
+
+# Sub Summary
+
+good                        | improvements
+----------------------------|---------
+separation of work display  | android:usesCleartextTraffic="true" 👀
+flexible                    | manual install of python dependencies
+native                      | 
+fast                        | user says "What?" 🧐  
+
 
 --------
 
 # {{CKLOQUOAI}}
 
+## Python Runtime Embedded in Android App
+
+-----
+
+# {{NAMEHERE}}
+
+* EMBEDDING PYTHON IN ANDROID APP 🤯
+* Two way: Android -> Python && Python -> Android 🤯
+* Wonderous 🤯
+* AMAZING NAME 🤯
+
 --------
 
+# 🤯
 
+--------
+
+### end
+
+--------
