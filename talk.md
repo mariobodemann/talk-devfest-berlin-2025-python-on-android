@@ -6,38 +6,30 @@
 
 ----------
 
-# (Disclaimer |: _Mario Bodemann_)
+# (Disclaimer: _Mario Bodemann_)
 
 * (not test relevant)
 * Android Developer Advocate @ Yubico
-  * builder of security usbc yubikeys
-* Ask me sbout fido 2 / WebAuthn / Android Developement & building things
-* uses python alongside Kotlin (#noHate)
+  * We do YubiKeys
+  * Come talk to me afterwards for a chance to get one
+* Ask me about 
+  * FIDO 2 / WebAuthn 
+  * Android Developement
+  * Building and sewing things
+* I use Python alongside Kotlin (#noHate)
 
 ----------
 
-# (Disclaimer ][: _deckdown_)
-
-* shenanigans
-* running code :mind-blown:
-* https://github.com/mariobodemann/deckdown
-
-~~~ bash
-grep '_deckdown_' -A5 talk.md
-~~~
-
-----------
-
-![](python-logo.png)
+![](python-logo.png){: width="1920" }
 
 ---------
 
 # Python: Hello World
 
-* low WTF's per minute
-* runs everywhere (Linux, Mac, Windows, Android)
-  * we ignore iOS
-* runtime compilation
+* Low WTF's per minute
+* Runs everywhere (Linux, Mac, Windows, Android)
+  * We ignore iOS 🫢
+* Compilation at runtime
 
 ~~~ python
 def hello(name):
@@ -74,11 +66,11 @@ fraktur -m rainbow -b round -f caps -- Welcome!
 ~~~
 
 ~~~ bash
-fraktur -f chess -- Hello World!
+fraktur -f chess -- Welcome!
 ~~~
 
 ~~~ bash
-fraktur -f slack -- New Release Available!
+fraktur -f slack -- Welcome!
 ~~~
 
 --------
@@ -95,33 +87,40 @@ fraktur -f slack -- New Release Available!
 
 * Termux is an Android app
   * https://termux.org
-* runs a terminal
-* can install open source tools
-* python is oss
+* Install through 'f-droid'
+* Runs a terminal
+* Can install open source tools
+* Python is OSS 🤯
 
 --------
 
-# termux-gui
+# termux-gui & termux-api
 
-* plugin for termux
-* access Android ui
+* Plugin for Termux
+* Gives access to Android UI
   * clipboard, camera,
-  * sms, calls, contacts
+  * SMS, calls, contacts
+  * …
 
 ------
 
 # DEMO: Termux in Android
 
-~~~ bash
+~~~ termux
 adb install f-droid.apk
 ~~~
 
-~~~ f-droid
+~~~ termux
 install termux
 ~~~
 
-~~~ pbcopy
+~~~ termux
 termux-dialog -t hello
+~~~
+
+
+~~~ { .termux-python .hidden }
+/Users/Mario.Bodemann/Library/Android/sdk/emulator/emulator -no-snapshot @Pixel_9a
 ~~~
 
 -------
@@ -139,30 +138,32 @@ r = subprocess.run(
     capture_output=True
 )
 
-print(r.stdout.decode().splitlines())
+print(r.stdout.decode())
 ~~~
 
 --------
 
-# termux-gui: frakturize
+# Termux: Fraktur
 
-~~~ python
+~~~ pbcopy
 import sys
-sys.path += ['/Users/Mario.Bodemann/Projects/s9s']
-import fraktur
+sys.path += ['/data/data/com.termux/files/home/s9s']
 
+import fraktur
 options = fraktur.generate(
-    'Hello World', 
+    'Hello DevFest World',
     font='all'
 ).splitlines()
+
 print(options)
 ~~~
 
 ------
 
-# Fraktur: show options to user
+# Fraktur: Show Options to User
 
-~~~ termux-python
+~~~ pbcopy
+import subprocess
 proc = subprocess.run(
     [
         "termux-dialog", 
@@ -172,13 +173,16 @@ proc = subprocess.run(
     ],
     capture_output=True
 )
+
+print(proc.stdout.decode())
 ~~~
 
 ---------
 
-# frakturize: copy answer to clipboard
+# Fraktur: Copy Answer to Clipboard
 
-~~~ python
+~~~ pbcopy
+import json
 response = json.loads(
     proc.stdout
 )
@@ -189,22 +193,24 @@ subprocess.run([
 ])
 ~~~
 
+---------
+
 # 🎉
 
 -------
 
 # Sub Summary
 
-* termux with python
-  * python can call Fraktur
-  * python can call termux-gui
-  * termux-gui can do Android
-* ergo
+* Termux with Python
+  * Python can call Fraktur
+  * Python can call Termux
+  * Termux can do Android
+* Ergo
   * **Python Fraktur can interact with Android**
 
 --------
 
-# Termux Redux
+# Termux 2.0
 
 <center>
 <img src="python-web-on-android.png" style="width:50%" /> 
@@ -212,74 +218,56 @@ subprocess.run([
 
 -------
 
-# Adding Native Android
+# Current approach
 
-* bridging from Python to Termux to Android
-* limited ui flexibility
-* brittle (google says no?)
-  * termux says no?
+* Bridging from Python to Termux to Android
+* Limited UI flexibility
+* brittle 
+  * Android says no?
+  * Termux says no?
 
 -------
 
-# Termux Redux
+# Termux Python Web Android App
 
-* Android UI
-  * jetpack compose
-  * retrofit
 * Python Web
-  * flask
-  * fraktur
+  * Flask
+  * Fraktur
+* Android UI
+  * Jetpack Compose
+  * Retrofit
 
 -------
 
 # Termux Web: Flask 🧪
 
-* simple 
-* nice
-* works
+* Web Server framework
+* Simple, nice, works
 
 ~~~ pbcopy
 pip install flask
 ~~~
 
----------
-
-# Import fraktur module
-
-~~~ termux-python
-import sys
-sys.path += ['/data/data/com.termux/files/home/s9s']
-~~~
-
 -----
 
-# Import flask and create server
+# Import Flask and create Server
 
 ~~~ termux-python
 from flask import Flask
 app = Flask('Fraktur.Server')
-~~~
 
---------
-
-# Set route (*POST "/" MESSAGE*)
-
-~~~ termux-python
 @app.post('/')
 def hello():
-  # NEXT  
+  # see next slide
 
 app.run()
 ~~~
 
 ----------
 
-# Call **fraktur** for server POST
+# Call *fraktur* for Server POST
 
 ~~~ termux-python
-import fraktur
-from flask import request
-
 message = request.get_data().decode()
 
 return fraktur.generate(
@@ -290,9 +278,11 @@ return fraktur.generate(
 
 -----
 
-# DEMO: *flask server on Android*
+# DEMO: *Flask Server on Android*
 
-## (copy sample, create file)
+* test webserver
+* should return list of messages
+* but formated through _fraktur_
 
 ~~~ { .termux-python .hidden }
 import sys
@@ -316,15 +306,7 @@ def hello():
 app.run()
 ~~~
 
---------
-
-# Checking the Server
-
-* test webserver
-* should return list of messages
-* but formated through _fraktur_
-
-~~~ pbcopy
+~~~ termux-python 
 curl 127.0.0.1:5000 -d 'Hello WOrld 2.01' | jq
 ~~~
 
@@ -334,17 +316,18 @@ curl 127.0.0.1:5000 -d 'Hello WOrld 2.01' | jq
 
 ------------
 
-# Android Web Client
+# The other 50%: Android HTTP Client
 
 * "default" Android App
-  * MVVM
-  * retrofit
-  * kotlinx serialization
-  * coroutines
+* MVVM
+* Retrofit
+* Kotlinx Serialization
+* Coroutines
+* No tests, because YOLO
 
 -------
 
-# Data Model
+# Retrofit Service
 
 ~~~ kotlin
 interface PythonService {
@@ -357,31 +340,74 @@ interface PythonService {
 
 ---------------
 
-# Web Service
+# Backend
 
 ~~~ kotlin
 class PythonBackend {
-    private val service = Retrofit
-        ./* setup */
-        .create(PythonService::class.java)
+  private val service = Retrofit
+    .// setup()
+    .create(PythonService::class.java)
 
-    suspend fun requestFraktures(message: String) =
-        service.getFraktures(message).map { 
-            it.removeSurrounding("\"") 
-        }
+  suspend fun requestFraktures(message: String) =
+    service
+      .getFraktures(message).map { 
+        it.removeSurrounding("\"") 
+      }
 }
 ~~~
 
 ------------
 
-# User Interface
+# User Interface: View Model
 
-* *Jetpack Compose*
-  * *LazyColumn* for strings returned
-* Android
-  * *ClipboardManager* for clipboard access
-  * *(Android)ViewModel* for cordination
-* nothing too unsurprising
+~~~ kotlin
+fun loadNewFraktures(message: String) {
+  viewModelScope.launch {
+    fraktures = backend
+      .requestFraktures(
+        message
+      )
+  }
+}
+~~~
+
+----------
+
+# Jetpack Compose
+
+~~~ kotlin
+LazyColumn {
+  items(fraktures) { fraktur ->
+    Card (
+      Modifier.clickable {
+        copyToClipboard(fraktur)
+      }) {
+      Box {
+        Text(
+          text = fraktur
+        )
+      }
+    }
+  }
+}
+~~~
+
+---
+
+# Android Interop: Clipboard Manager
+
+~~~ kotlin
+val manager = getApplication()
+  .getSystemService<ClipboardManager>()
+
+val clip = ClipData
+  .newPlainText(
+    "Fraktur", 
+    fraktur
+  )
+  
+manager?.setPrimaryClip(clip)
+~~~
 
 ----------
 
@@ -428,14 +454,21 @@ fast                        | user says "What?" 🧐
 
 # Chakotay Dependencies
 
-~~~ gradle
+~~~ toml
+// libs.versions.toml
+[versions]
 python = "16.1.0"
-python = { id = "com.chaquo.python", version.ref = "python" }
 
-plugins {
-    // ... 
-    alias(libs.plugins.python) apply false
-}
+[plugins]
+python = { id = "com.chaquo.python", version.ref = "python" }
+~~~
+
+~~~ gradle
+// /build.gradle.kts
+alias(libs.plugins.python) apply false
+
+// /app/build.gradle.kts
+alias(libs.plugins.python)
 ~~~
 
 ---------
@@ -443,6 +476,7 @@ plugins {
 # Configuration
 
 ~~~ gradle
+// /app/build.gradle.kts
 chaquopy {
     defaultConfig {
         pip {
@@ -456,21 +490,23 @@ chaquopy {
 
 -----------
 
-# In Code Setup
+# Back To Kotlin: Setup in Service
 
 ~~~ kotlin
-private val python: Python by lazy {
-    if (!Python.isStarted()) {
-        Python.start(AndroidPlatform(context))
-    }
+val python: Python by lazy {
+  if (!Python.isStarted()) {
+    Python.start(
+      AndroidPlatform(context)
+    )
+  }
 
-    Python.getInstance()
+  Python.getInstance()
 }
 ~~~
 
 ----------
 
-# Usage in Kotlin
+# 'Bind' Python in Kotlin
 
 ~~~ kotlin
 suspend fun requestFraktures(
@@ -498,7 +534,29 @@ suspend fun requestFraktures(
 </center>
 
 // THINK ABOUT WIENERS
+{: .hidden}
 
+-------
+
+# UseCase
+
+## 🪡🧵 @ 🤖🐻
+
+--------
+
+# GDG Berlin Android Booth @ Droidcon Berlin
+
+* Take your Composeables, turn it into an embroidered patch
+* Embroidery file creation lib *pystitch*
+  * Translation from Python to Java not functional
+  * Hence: Chaquopy was discovered and used
+
+
+<center>
+
+<img src="embroidery.png" height="320" />
+
+</center>
 -------
 
 # Summary
@@ -506,10 +564,9 @@ suspend fun requestFraktures(
 * [Termux](https://termux.org)
   * unix like Terminal on the go
   * experiment with OSS software
-  * install git!
 * [WebServer](https://flask.palletsprojects.com/)
   * make your phone into a server
-  * serve versuse surf. 🏄
+  * serving versus surfing 🏄
 * [Embedding](https://chaquo.com/)
   * make your app speak Python
   * use all^1 of your Python libraries
@@ -517,11 +574,16 @@ suspend fun requestFraktures(
 
 -----------
 
-# github.com/mariobodemann/<br/>talk-devfest-berlin-2025-python-on-android
+# Thanks? {: style="flex:1" } 
 
-# End
+## Questions? {: style="flex:1" }  
 
-# QnA
+### Answers? {: style="flex:1" }  
 
+<center>
 
+github.com/mariobodemann/talk-devfest-berlin-2025-python-on-android
+<br/>
+<img src="summary.qr.png" style="width:350px" />
 
+</center>
