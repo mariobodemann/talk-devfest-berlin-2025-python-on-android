@@ -8,13 +8,12 @@
 
 # (Disclaimer: _Mario Bodemann_)
 
-* (not test relevant)
 * Android Developer Advocate @ Yubico
   * We do YubiKeys
   * Come talk to me afterwards for a chance to get one
 * Ask me about 
   * FIDO 2 / WebAuthn 
-  * Android Developement
+  * Android Development
   * Building and sewing things
 * I use Python alongside Kotlin (#noHate)
 
@@ -26,7 +25,7 @@
 
 # Python: Hello World
 
-* Low WTF's per minute
+* Low WTFs per minute
 * Runs everywhere (Linux, Mac, Windows, Android)
   * We ignore iOS 🫢
 * Compilation at runtime
@@ -87,7 +86,7 @@ fraktur -f slack -- Welcome!
 
 * Termux is an Android app
   * https://termux.org
-* Install through 'f-droid'
+* Install through 'F-Droid'
 * Runs a terminal
 * Can install open source tools
 * Python is OSS 🤯
@@ -241,8 +240,9 @@ subprocess.run([
 
 # Termux Web: Flask 🧪
 
-* Web Server framework
-* Simple, nice, works
+* lightweight
+* easy-to-use 
+* web microframework
 
 ~~~ pbcopy
 pip install flask
@@ -323,7 +323,10 @@ curl 127.0.0.1:5000 -d 'Hello WOrld 2.01' | jq
 * Retrofit
 * Kotlinx Serialization
 * Coroutines
-* No tests, because YOLO
+
+
+* No tests, because YOiLO
+{: .hidden }
 
 -------
 
@@ -345,7 +348,7 @@ interface PythonService {
 ~~~ kotlin
 class PythonBackend {
   private val service = Retrofit
-    .// setup()
+    // add converters etc.
     .create(PythonService::class.java)
 
   suspend fun requestFraktures(message: String) =
@@ -423,10 +426,10 @@ manager?.setPrimaryClip(clip)
 
 good                        | improvements
 ----------------------------|---------
-separation of work display  | android:usesCleartextTraffic="true" 👀
-flexible                    | manual install of python dependencies
+clean separation (work/ui)  | android:usesCleartextTraffic="true" 👀
+flexible                    | manual python dependencies
 native                      | 
-fast                        | user says "What?" 🧐  
+fast                        | developer and user experience 🧐  
 
 
 --------
@@ -549,7 +552,8 @@ suspend fun requestFraktures(
 * Take your Composeables, turn it into an embroidered patch
 * Embroidery file creation lib *pystitch*
   * Translation from Python to Java not functional
-  * Hence: Chaquopy was discovered and used
+  * Python in Android needee
+  * 'chaquopy'
 
 
 <center>
@@ -574,11 +578,11 @@ suspend fun requestFraktures(
 
 -----------
 
-# Thanks? {: style="flex:1" } 
+# Thanks {: style="flex:1" } 
 
-## Questions? {: style="flex:1" }  
+## Questions {: style="flex:1" }  
 
-### Answers? {: style="flex:1" }  
+### Answers {: style="flex:1" }  
 
 <center>
 
